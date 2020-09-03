@@ -6,7 +6,7 @@
         <vue-scroll :ops="ops">
           <el-menu background-color="#409EFF" text-color="#fff" active-text-color="#ffd04b">
             <!-- 循环遍历渲染左侧导航 -->
-            <el-submenu index="1">
+            <el-submenu  index="1">
               <template slot="title">
                 <i class="icon iconfont iconnianfen"></i>
                 <span class="oneLevel">第一年(2013)</span>
@@ -28,7 +28,7 @@
               </el-submenu>
             </el-submenu>
 
-            <el-submenu index="2">
+            <!-- <el-submenu index="2">
               <template slot="title">
                 <i class="icon iconfont iconnianfen"></i>
                 <span class="oneLevel">第二年(2014)</span>
@@ -180,7 +180,7 @@
                 <template slot="title">十二月</template>
                 <el-menu-item index="8-12-1">十二月一日</el-menu-item>
               </el-submenu>
-            </el-submenu>
+            </el-submenu>-->
           </el-menu>
         </vue-scroll>
       </el-aside>
@@ -255,7 +255,7 @@ export default {
     return {
       headImageUrl:
         "https://fuss10.elemecdn.com/e/5d/4a731a90594a4af544c0c25941171jpeg.jpeg", //头像图片地址
-      ops: {
+      ops: {//滚动条样式
         //滚动条组件绑定的值
         vuescroll: {},
         scrollPanel: {},
@@ -275,8 +275,16 @@ export default {
           background: "#C0C4CC"
         }
       },
-      weatherSearchContent: "" //天气搜索框绑定的内容
+      weatherSearchContent: "",//天气搜索框绑定的内容
     };
+  },
+  created() {
+    this.$http.get("/api/goods").then(function(response) {
+      console.log("AAAAAAAAA", response.body);
+      if (response.body.code == "0") {
+        this.goods = response.body.data;
+      }
+    });
   },
   methods: {
     searchCityWeather() {
@@ -329,14 +337,14 @@ export default {
 //中间主体样式
 .el-main {
   .custom-breadcrumb-navigation {
-    .el-breadcrumb{
+    .el-breadcrumb {
       padding-bottom: 15px;
     }
-    .weatherSearch{
+    .weatherSearch {
       border-top: solid 1px #ebeef5;
-      .el-row{
-        .el-col{
-          .el-form-item{
+      .el-row {
+        .el-col {
+          .el-form-item {
             margin-top: 22px;
           }
         }
