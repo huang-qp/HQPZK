@@ -19,17 +19,20 @@
           <el-col :span="6">
             <el-form :model="userNamePassword">
               <el-form-item>
-                <el-input  prefix-icon="el-icon-s-custom" v-model = "userNamePassword.userName"></el-input>
+                <el-autocomplete prefix-icon="iconfont iconyonghu" style="width: 100%" v-model = "userNamePassword.userName" :fetch-suggestions="querySearch"></el-autocomplete>
               </el-form-item>
               <el-form-item>
-                <el-input  prefix-icon="el-icon-lock" v-model = "userNamePassword.password"></el-input>
+                <el-input  prefix-icon="iconfont iconsuo" v-model = "userNamePassword.password" show-password></el-input>
               </el-form-item>
               <el-form-item>
                 <el-col :span="12">
-                  <el-input prefix-icon="el-icon-unlock" v-model = "userNamePassword.captcha" placeholder="图形验证码"></el-input>
+                  <el-input prefix-icon="iconfont iconyanzhengma" v-model = "userNamePassword.captcha" placeholder="图形验证码"></el-input>
                 </el-col>
                 <el-col :span="9" :offset="3">
-                  <el-input prefix-icon="el-icon-unlock" v-model = "userNamePassword.captcha" placeholder="图形验证码"></el-input>
+                  <el-image
+                    style="width: 100%"
+                    :src="url"
+                    ></el-image>
                 </el-col>
               </el-form-item>
             </el-form>
@@ -41,7 +44,7 @@
             <el-form>
               <el-form-item>
                 <el-col :span="12">
-                  <el-checkbox v-model="rememberPassword">记住密码</el-checkbox>
+                  <el-checkbox v-model="rememberPassword" @change="checkboxRememberPassword">记住密码</el-checkbox>
                 </el-col>
                 <el-col :span="12" class="forgetPassword">
                   <el-button type="text">忘记密码？</el-button>
@@ -63,9 +66,15 @@
               <el-form-item>
                 <el-col :span="12">
                   <el-form-item label="社交账号登入" >
-                    <i class="el-icon-circle-plus"></i>
-                    <i class="el-icon-circle-plus"></i>
-                    <i class="el-icon-circle-plus"></i>
+                    <svg class="icon" aria-hidden="true">
+                    <use xlink:href="#iconweixin1"></use>
+                    </svg>
+                    <svg class="icon" aria-hidden="true">
+                      <use xlink:href="#iconQQ"></use>
+                    </svg>
+                    <svg class="icon" aria-hidden="true">
+                      <use xlink:href="#iconweibo"></use>
+                    </svg>
                   </el-form-item>
                 </el-col>
                 <el-col :span="12" class="forgetPassword">
@@ -104,12 +113,14 @@ export default {
   name: "login",
   data() {
     return {
-      userNamePassword:{
+      userNamePassword:{//用户名，密码，验证码绑定的值
         userName:"",//用户名
         password:"",//密码
-        captcha:""//验证码
+        captcha:"",//验证码
+        userNamePasswordArr:[]
       },
-      rememberPassword:false//记住密码
+      rememberPassword:false,//记住密码
+      url:"https://www.oschina.net/action/user/captcha"//验证码图片路径
     };
   },
   methods:{
@@ -128,12 +139,49 @@ export default {
       // }).error((res)=>{
       //   console.log(res)
       // })
-      if(this.userNamePassword.userName=='haungqp'&&this.userNamePassword.password=='123'){
+      if(this.userNamePassword.userName=='huangqp'&&this.userNamePassword.password=='123'){
         alert('登陆成功')
+        if(this.rememberPassword){
+          let obj = {
+            value: this.userNamePassword.userName,
+            address: this.userNamePassword.password
+          };
+          this.userNamePassword.userNamePasswordArr.push(obj)
+        }
       }else{
         alert('登录失败')
       }
-    }
+    },
+    /**
+     * @description: 记住密码
+     * @param {boolean} val 复选框的值
+     * @return {type}
+     */
+    checkboxRememberPassword(val){
+      alert(val)
+    },
+    /**
+     * @description: 依据用户名输入内容进行查找
+     * @param {string} queryString 输入的内容
+     *  @param {function} cb 回调函数
+     * @return {type}
+     */
+    querySearch(queryString, cb) {
+      let userNamePasswordArr = this.userNamePassword.userNamePasswordArr;
+      let results = queryString ? userNamePasswordArr.filter(this.createFilter(queryString)) : userNamePasswordArr;
+      // 调用 callback 返回建议列表的数据
+      cb(results);
+    },
+    /**
+     * @description: 查找输入内容是否在库中
+     * @param {string} queryString 用户名输入的内容
+     * @return {function} 返回一个函数
+     */
+    createFilter(queryString) {
+      return (restaurant) => {
+        return (restaurant.value.toLowerCase().indexOf(queryString.toLowerCase()) === 0);
+      };
+    },
   }
 };
 </script>
@@ -182,5 +230,12 @@ position: absolute;
   bottom: 0;
   left: 50%;
   transform: translateX(-50%);
+}
+.icon {
+  width: 2em;
+  height: 2em;
+  vertical-align: 10em;
+  fill: currentColor;
+  overflow: hidden;
 }
 </style>
